@@ -69,17 +69,16 @@ type Meeting struct {
 	Pass string `json:"pass"`
 }
 
-// Today provides today's curriculum data
-type Today []DoublePeriod
+// SpecificDay provides curriculum data of the specific day
+type SpecificDay []DoublePeriod
 
 // NewToday creates a Today object
-func NewToday(w Week) Today {
-	now := time.Now()
-	dayName := NewDayName(&now)
+func NewSpecificDay(w Week, t time.Time) SpecificDay {
+	dayName := NewDayName(&t)
 
 	day := w[dayName]
 
-	date := Date(FormatTime(&now))
+	date := Date(FormatTime(&t))
 
 	var doublePeriods []DoublePeriod
 
@@ -89,7 +88,11 @@ func NewToday(w Week) Today {
 		doublePeriods = append(doublePeriods, dp)
 	}
 
-	return Today(doublePeriods)
+	return SpecificDay(doublePeriods)
+}
+
+func Today(w Week) SpecificDay {
+    return NewSpecificDay(w, time.Now())
 }
 
 // FormatTime returns formatted time

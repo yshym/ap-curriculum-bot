@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/yevhenshymotiuk/ap-curriculum-bot/curriculum"
 )
@@ -13,5 +14,6 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	fmt.Println(curriculum.NewToday(*w))
+	fmt.Println(curriculum.Today(*w))
+	fmt.Println(curriculum.NewSpecificDay(*w, time.Date(2020, 9, 7, 0, 0, 0, 0, time.Local)))
 }
