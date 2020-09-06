@@ -1,0 +1,12 @@
+{
+  "name": "ap-curriculum-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:yevhenshymotiuk/ap-curriculum-bot.git",
+  "author": "Yevhen Shymotiuk <yevhenshymotiuk@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "serverless-s3-deploy": "^0.9.0"
+  }
+}

@@ -5,8 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"os"
-	"path"
+	"log"
 	"strings"
 	"time"
 )
@@ -15,16 +14,10 @@ import (
 type Week map[DayName]Day
 
 // NewWeek creates a Week object
-func NewWeek() (*Week, error) {
+func NewWeek(r io.Reader) (*Week, error) {
 	w := &Week{}
 
-	filePath := path.Join("data", os.Getenv("CURRICULUM_FILE_NAME"))
-	f, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
-	}
-
-	err = w.FromJSON(f)
+	err := w.FromJSON(r)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +91,7 @@ func (sd SpecificDay) Format() string {
 		if dp != (DoublePeriod{}) {
 			formatted.WriteString(
 				fmt.Sprintf(
-					"%d) %s(%s) | %s\n   %s\n",
+					"%d) %s(%s) | %s\n%s\n",
 					i+1,
 					dp.Name,
 					dp.Type,
@@ -113,7 +106,12 @@ func (sd SpecificDay) Format() string {
 }
 
 func Today(w Week) SpecificDay {
-	return NewSpecificDay(w, time.Now())
+	l, err := time.LoadLocation("Europe/Kiev")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return NewSpecificDay(w, time.Now().In(l))
 }
 
 // FormatTime returns formatted time

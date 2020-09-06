@@ -1,5 +1,16 @@
-# static files
-data/
+node_modules/
 
 # direnv
 .envrc
+
+# Binary executables
+bin/
+
+# static files
+data/
+
+# Environment variables for serverless framework
+serverless.env.yml
+
+# Deployment artifacts
+.serverless/
