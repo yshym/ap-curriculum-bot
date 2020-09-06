@@ -13,5 +13,5 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	fmt.Println(w)
+	fmt.Println(curriculum.NewToday(*w))
 }
