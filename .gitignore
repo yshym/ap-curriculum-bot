@@ -1,0 +1,5 @@
+# static files
+data/
+
+# direnv
+.envrc
