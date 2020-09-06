@@ -14,6 +14,10 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	fmt.Println(curriculum.Today(*w))
-	fmt.Println(curriculum.NewSpecificDay(*w, time.Date(2020, 9, 7, 0, 0, 0, 0, time.Local)))
+	fmt.Println(
+		curriculum.NewSpecificDay(
+			*w,
+			time.Date(2020, 9, 7, 0, 0, 0, 0, time.Local),
+		).Format(),
+	)
 }

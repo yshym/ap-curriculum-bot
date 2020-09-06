@@ -91,8 +91,29 @@ func NewSpecificDay(w Week, t time.Time) SpecificDay {
 	return SpecificDay(doublePeriods)
 }
 
+func (sd SpecificDay) Format() string {
+	var formatted strings.Builder
+
+	for i, dp := range sd {
+		if dp != (DoublePeriod{}) {
+			formatted.WriteString(
+				fmt.Sprintf(
+					"%d) %s(%s) | %s\n   %s\n",
+					i+1,
+					dp.Name,
+					dp.Type,
+					dp.Lecturer,
+					dp.Meeting.Link,
+				),
+			)
+		}
+	}
+
+	return strings.TrimSpace(formatted.String())
+}
+
 func Today(w Week) SpecificDay {
-    return NewSpecificDay(w, time.Now())
+	return NewSpecificDay(w, time.Now())
 }
 
 // FormatTime returns formatted time
