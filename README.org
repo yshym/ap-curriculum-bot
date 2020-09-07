@@ -1,1 +1,6 @@
 #+TITLE: ap-curriculum-bot
+
+#+BEGIN_QUOTE
+Telegram bot which displays the curriculum for the AP-42
+group of Taras Shevchenko National University of Kyiv
+#+END_QUOTE
