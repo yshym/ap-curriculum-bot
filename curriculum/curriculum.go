@@ -73,7 +73,7 @@ func NewSpecificDay(w Week, t time.Time) SpecificDay {
 
 	day := w[dayName]
 
-	date := Date(FormatTime(&t))
+	date := Date(helpers.FormatTime(&t))
 
 	var doublePeriods []DoublePeriod
 
@@ -121,26 +121,4 @@ func Today(w Week) SpecificDay {
 	}
 
 	return NewSpecificDay(w, time.Now().In(l))
-}
-
-// FormatTime returns formatted time
-func FormatTime(t *time.Time) string {
-	dayNumber, monthNumber := t.Day(), t.Month()
-	var formattedTimeBuilder strings.Builder
-
-	if dayNumber < 10 {
-		formattedTimeBuilder.WriteString(fmt.Sprintf("0%d", dayNumber))
-	} else {
-		formattedTimeBuilder.WriteRune(rune(dayNumber))
-	}
-
-	formattedTimeBuilder.WriteRune('.')
-
-	if monthNumber < 10 {
-		formattedTimeBuilder.WriteString(fmt.Sprintf("0%d", monthNumber))
-	} else {
-		formattedTimeBuilder.WriteRune(rune(monthNumber))
-	}
-
-	return formattedTimeBuilder.String()
 }
