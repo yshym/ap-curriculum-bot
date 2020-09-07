@@ -112,6 +112,16 @@ func handler(
 		if err != nil {
 			return apigateway.Response404, err
 		}
+	case "tomorrow":
+		responseMessageText, err = specificDayText(
+			assetsBucket,
+			curriculumFile1,
+			curriculumFile2,
+			helpers.Now().AddDate(0, 0, 1),
+		)
+		if err != nil {
+			return apigateway.Response404, err
+		}
 	default:
 		responseMessageText = `¯\_(ツ)_/¯`
 	}
