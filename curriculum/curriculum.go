@@ -95,7 +95,7 @@ func (sd SpecificDay) Format() string {
 		} else {
 			formatted.WriteString(
 				fmt.Sprintf(
-					"%d) %s(%s) | %s\n%s\n",
+					"%d) %s(%s) | %s\nПосилання: %s\n",
 					i+1,
 					dp.Name,
 					dp.Type,
@@ -103,6 +103,11 @@ func (sd SpecificDay) Format() string {
 					dp.Meeting.Link,
 				),
 			)
+
+			pass := dp.Meeting.Pass
+			if pass != "" {
+				formatted.WriteString(fmt.Sprintf("Пароль: %s\n", pass))
+			}
 		}
 	}
 
