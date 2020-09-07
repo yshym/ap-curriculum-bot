@@ -11,3 +11,5 @@ serverless.env.yml
 
 # Deployment artifacts
 .serverless/
+
+assets/
