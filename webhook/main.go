@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -15,6 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/yevhenshymotiuk/ap-curriculum-bot/curriculum"
+	"github.com/yevhenshymotiuk/ap-curriculum-bot/helpers"
 	"github.com/yevhenshymotiuk/telegram-lambda-helpers/apigateway"
 )
 
@@ -38,6 +40,43 @@ func getObjectFromS3Bucket(
 	}
 
 	return resp
+}
+
+func specificDayText(ab, cf1, cf2 string, t time.Time) (string, error) {
+	var text string
+
+	resp1 := getObjectFromS3Bucket(ab, cf1)
+	resp2 := getObjectFromS3Bucket(ab, cf2)
+
+	w1, err := curriculum.NewWeek(io.Reader(resp1.Body))
+	if err != nil {
+		return "", err
+	}
+	w2, err := curriculum.NewWeek(io.Reader(resp2.Body))
+	if err != nil {
+		return "", err
+	}
+
+	t1, t2 := curriculum.NewSpecificDay(
+		*w1,
+		t,
+	), curriculum.NewSpecificDay(
+		*w2,
+		t,
+	)
+
+	// Formatted today's curriculums for 2 subgroups
+	var ftc1, ftc2 string
+	ftc1 = t1.Format()
+
+	if reflect.DeepEqual(t1, t2) {
+		text = fmt.Sprintf("Розклад однаковий для обох підгруп:\n%s", ftc1)
+	} else {
+		ftc2 = t2.Format()
+		text = fmt.Sprintf("Підгрупа 1:\n%s\n\nПідгрупа 2:\n%s", ftc1, ftc2)
+	}
+
+	return text, nil
 }
 
 func handler(
@@ -64,29 +103,14 @@ func handler(
 
 	switch message.Command() {
 	case "today":
-		resp1 := getObjectFromS3Bucket(assetsBucket, curriculumFile1)
-		resp2 := getObjectFromS3Bucket(assetsBucket, curriculumFile2)
-
-		w1, err := curriculum.NewWeek(io.Reader(resp1.Body))
+		responseMessageText, err = specificDayText(
+			assetsBucket,
+			curriculumFile1,
+			curriculumFile2,
+			helpers.Now(),
+		)
 		if err != nil {
 			return apigateway.Response404, err
-		}
-		w2, err := curriculum.NewWeek(io.Reader(resp2.Body))
-		if err != nil {
-			return apigateway.Response404, err
-		}
-
-		t1, t2 := curriculum.Today(*w1), curriculum.Today(*w2)
-
-		// Formatted today's curriculums for 2 subgroups
-		var ftc1, ftc2 string
-		ftc1 = t1.Format()
-
-		if reflect.DeepEqual(t1, t2) {
-			responseMessageText = fmt.Sprintf("Розклад однаковий для обох підгруп:\n%s", ftc1)
-		} else {
-			ftc2 = t2.Format()
-			responseMessageText = fmt.Sprintf("Підгрупа 1:\n%s\n\nПідгрупа 2:\n%s", ftc1, ftc2)
 		}
 	default:
 		responseMessageText = `¯\_(ツ)_/¯`

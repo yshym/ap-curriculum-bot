@@ -8,6 +8,8 @@ import (
 	"log"
 	"strings"
 	"time"
+
+	"github.com/yevhenshymotiuk/ap-curriculum-bot/helpers"
 )
 
 // Week provides curriculum week data
@@ -106,7 +108,7 @@ func (sd SpecificDay) Format() string {
 }
 
 func Today(w Week) SpecificDay {
-	l, err := time.LoadLocation("Europe/Kiev")
+	l, err := helpers.LoadLocation()
 	if err != nil {
 		log.Fatalln(err)
 	}
