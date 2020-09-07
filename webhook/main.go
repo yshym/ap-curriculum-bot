@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"os"
+	"reflect"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -54,21 +56,38 @@ func handler(
 	}
 
 	assetsBucket := os.Getenv("ASSETS_BUCKET")
-	curriculumFile := os.Getenv("CURRICULUM_FILE")
+	curriculumFile1 := os.Getenv("CURRICULUM_FILE1")
+	curriculumFile2 := os.Getenv("CURRICULUM_FILE2")
 
 	message := update.Message
 	var responseMessageText string
 
 	switch message.Command() {
 	case "today":
-		resp := getObjectFromS3Bucket(assetsBucket, curriculumFile)
-		w, err := curriculum.NewWeek(io.Reader(resp.Body))
+		resp1 := getObjectFromS3Bucket(assetsBucket, curriculumFile1)
+		resp2 := getObjectFromS3Bucket(assetsBucket, curriculumFile2)
+
+		w1, err := curriculum.NewWeek(io.Reader(resp1.Body))
+		if err != nil {
+			return apigateway.Response404, err
+		}
+		w2, err := curriculum.NewWeek(io.Reader(resp2.Body))
 		if err != nil {
 			return apigateway.Response404, err
 		}
 
-		responseMessageText = curriculum.Today(*w).Format()
-		log.Println(responseMessageText)
+		t1, t2 := curriculum.Today(*w1), curriculum.Today(*w2)
+
+		// Formatted today's curriculums for 2 subgroups
+		var ftc1, ftc2 string
+		ftc1 = t1.Format()
+
+		if reflect.DeepEqual(t1, t2) {
+			responseMessageText = fmt.Sprintf("Розклад однаковий для обох підгруп:\n%s", ftc1)
+		} else {
+			ftc2 = t2.Format()
+			responseMessageText = fmt.Sprintf("Підгрупа 1:\n%s\n\nПідгрупа 2:\n%s", ftc1, ftc2)
+		}
 	default:
 		responseMessageText = `¯\_(ツ)_/¯`
 	}
