@@ -90,7 +90,9 @@ func (sd SpecificDay) Format() string {
 	var formatted strings.Builder
 
 	for i, dp := range sd {
-		if dp != (DoublePeriod{}) {
+		if dp == (DoublePeriod{}) {
+			formatted.WriteString(fmt.Sprintf("%d) -\n", i+1))
+		} else {
 			formatted.WriteString(
 				fmt.Sprintf(
 					"%d) %s(%s) | %s\n%s\n",
