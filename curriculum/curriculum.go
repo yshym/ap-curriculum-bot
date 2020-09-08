@@ -14,7 +14,7 @@ import (
 )
 
 // Week provides curriculum week data
-type Week map[DayName]Day
+type Week map[helpers.DayName]Day
 
 // NewWeek creates a Week object
 func NewWeek(r io.Reader) (*Week, error) {
@@ -34,24 +34,13 @@ func (w *Week) FromJSON(r io.Reader) error {
 	return d.Decode(w)
 }
 
-// DayName is a name of the day of the week
-type DayName string
-
-// NewDayName creates a DayName object
-func NewDayName(t *time.Time) DayName {
-	return DayName(strings.ToLower(t.Weekday().String()))
-}
-
 // Day provides curriculum day data
 type Day []SubGroup
 
 type SubGroup [2]DoublePeriodVariants
 
 // DoublePeriodVariants provides all possible variants of current double period
-type DoublePeriodVariants map[Date]DoublePeriod
-
-// Date provides double period date
-type Date string
+type DoublePeriodVariants map[helpers.Date]DoublePeriod
 
 // DoublePeriod provides curriculum day data
 type DoublePeriod struct {
@@ -72,11 +61,11 @@ type SpecificDay [2][]DoublePeriod
 
 // NewSpecificDay creates a SpecificDay object
 func NewSpecificDay(w Week, t time.Time) SpecificDay {
-	dayName := NewDayName(&t)
+	dayName := helpers.NewDayName(&t)
 
 	day := w[dayName]
 
-	date := Date(helpers.FormatTime(&t))
+	date := helpers.Date(helpers.FormatTime(&t))
 
 	var doublePeriods1, doublePeriods2 []DoublePeriod
 
@@ -152,6 +141,7 @@ func formatDoublePeriods(dps []DoublePeriod) string {
 	return strings.TrimSpace(formatted.String())
 }
 
+// Today creates a SpecificDay object for today's curriculum
 func Today(w Week) SpecificDay {
 	l, err := helpers.LoadLocation()
 	if err != nil {
