@@ -2,11 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"os"
-	"reflect"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -42,41 +40,20 @@ func getObjectFromS3Bucket(
 	return resp
 }
 
-func specificDayText(ab, cf1, cf2 string, t time.Time) (string, error) {
-	var text string
+func specificDayText(ab, cf string, t time.Time) (string, error) {
+	resp := getObjectFromS3Bucket(ab, cf)
 
-	resp1 := getObjectFromS3Bucket(ab, cf1)
-	resp2 := getObjectFromS3Bucket(ab, cf2)
-
-	w1, err := curriculum.NewWeek(io.Reader(resp1.Body))
-	if err != nil {
-		return "", err
-	}
-	w2, err := curriculum.NewWeek(io.Reader(resp2.Body))
+	w, err := curriculum.NewWeek(io.Reader(resp.Body))
 	if err != nil {
 		return "", err
 	}
 
-	t1, t2 := curriculum.NewSpecificDay(
-		*w1,
-		t,
-	), curriculum.NewSpecificDay(
-		*w2,
+	sd := curriculum.NewSpecificDay(
+		*w,
 		t,
 	)
 
-	// Formatted today's curriculums for 2 subgroups
-	var ftc1, ftc2 string
-	ftc1 = t1.Format()
-
-	if reflect.DeepEqual(t1, t2) {
-		text = fmt.Sprintf("Розклад однаковий для обох підгруп:\n%s", ftc1)
-	} else {
-		ftc2 = t2.Format()
-		text = fmt.Sprintf("Підгрупа 1:\n%s\n\nПідгрупа 2:\n%s", ftc1, ftc2)
-	}
-
-	return text, nil
+	return sd.Format(), nil
 }
 
 func handler(
@@ -95,8 +72,7 @@ func handler(
 	}
 
 	assetsBucket := os.Getenv("ASSETS_BUCKET")
-	curriculumFile1 := os.Getenv("CURRICULUM_FILE1")
-	curriculumFile2 := os.Getenv("CURRICULUM_FILE2")
+	curriculumFile := os.Getenv("CURRICULUM_FILE")
 
 	message := update.Message
 	var responseMessageText string
@@ -105,8 +81,7 @@ func handler(
 	case "today":
 		responseMessageText, err = specificDayText(
 			assetsBucket,
-			curriculumFile1,
-			curriculumFile2,
+			curriculumFile,
 			helpers.Now(),
 		)
 		if err != nil {
@@ -115,8 +90,7 @@ func handler(
 	case "tomorrow":
 		responseMessageText, err = specificDayText(
 			assetsBucket,
-			curriculumFile1,
-			curriculumFile2,
+			curriculumFile,
 			helpers.Now().AddDate(0, 0, 1),
 		)
 		if err != nil {

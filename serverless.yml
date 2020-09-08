@@ -15,8 +15,7 @@ provider:
             - '/*'
   runtime: go1.x
   environment:
-    CURRICULUM_FILE1: ${file(./serverless.env.yml):CURRICULUM_FILE1, ''}
-    CURRICULUM_FILE2: ${file(./serverless.env.yml):CURRICULUM_FILE2, ''}
+    CURRICULUM_FILE: ${file(./serverless.env.yml):CURRICULUM_FILE, ''}
     TELEGRAM_TOKEN: ${file(./serverless.env.yml):TELEGRAM_TOKEN, ''}
     ASSETS_BUCKET: ${file(./serverless.env.yml):ASSETS_BUCKET, ''}
 
