@@ -108,7 +108,10 @@ func (sd SpecificDay) Format() string {
 	fdps1 = formatDoublePeriods(dps1)
 
 	if reflect.DeepEqual(dps1, dps2) {
-		formatted = fmt.Sprintf("Розклад однаковий для обох підгруп:\n%s", fdps1)
+		formatted = fmt.Sprintf(
+			"Розклад однаковий для обох підгруп:\n%s",
+			fdps1,
+		)
 	} else {
 		fdps2 = formatDoublePeriods(dps2)
 		formatted = fmt.Sprintf("Підгрупа 1:\n%s\n\nПідгрупа 2:\n%s", fdps1, fdps2)
@@ -119,6 +122,10 @@ func (sd SpecificDay) Format() string {
 
 func formatDoublePeriods(dps []DoublePeriod) string {
 	var formatted strings.Builder
+
+	if len(dps) == 0 {
+		return "Пар немає"
+	}
 
 	for i, dp := range dps {
 		if dp == (DoublePeriod{}) {
