@@ -21,11 +21,11 @@ func TestWorkday(t *testing.T) {
 	l, err := helpers.LoadLocation()
 	is.NoErr(err)
 
-	d := NewSpecificDay(*w, time.Date(2020, 9, 14, 0, 0, 0, 0, l))
+	d := NewSpecificDay(*w, time.Date(2020, 9, 21, 0, 0, 0, 0, l))
 	dps1, dps2 := d[0], d[1]
 
 	is.Equal(dps1[2].Name, "Методи штучного інтелекту")
-	is.Equal(dps2[2].Name, "Методи штучного інтелекту")
+	is.Equal(dps1[2].Name, dps2[2].Name)
 }
 
 func TestWeekend(t *testing.T) {
