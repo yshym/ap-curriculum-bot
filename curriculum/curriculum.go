@@ -56,6 +56,28 @@ type Meeting struct {
 	Pass string `json:"pass"`
 }
 
+func contains(slice []string, item string) bool {
+	set := make(map[string]struct{}, len(slice))
+	for _, s := range slice {
+		set[s] = struct{}{}
+	}
+
+	_, ok := set[item]
+	return ok
+}
+
+func doublePeriodFromDate(
+	dpv DoublePeriodVariants,
+	date helpers.Date,
+) (DoublePeriod, bool) {
+	for d, dp := range dpv {
+		if contains(strings.Split(string(d), ", "), string(date)) {
+			return dp, true
+		}
+	}
+	return DoublePeriod{}, false
+}
+
 // SpecificDay provides curriculum data of the specific day
 type SpecificDay [2][]DoublePeriod
 
@@ -78,8 +100,10 @@ func NewSpecificDay(w Week, t time.Time) SpecificDay {
 			dpv1, dpv2 = sg[0], sg[1]
 		}
 
-		dp1, _ := dpv1[date]
-		dp2, _ := dpv2[date]
+		// dp1, _ := dpv1[date]
+		dp1, _ := doublePeriodFromDate(dpv1, date)
+		// dp2, _ := dpv2[date]
+		dp2, _ := doublePeriodFromDate(dpv2, date)
 
 		doublePeriods1 = append(doublePeriods1, dp1)
 		doublePeriods2 = append(doublePeriods2, dp2)
