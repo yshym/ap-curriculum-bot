@@ -39,7 +39,7 @@ func FormatTime(t *time.Time) string {
 	if monthNumber < 10 {
 		formattedTimeBuilder.WriteString(fmt.Sprintf("0%d", monthNumber))
 	} else {
-		formattedTimeBuilder.WriteString(monthNumber.String())
+		formattedTimeBuilder.WriteString(strconv.Itoa(int(monthNumber)))
 	}
 
 	return formattedTimeBuilder.String()
