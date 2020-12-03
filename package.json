@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "sls": "sls"
+    "deploy": "sls deploy --verbose",
+    "logs": "sls logs -f webhook"
   },
   "repository": "git@github.com:yevhenshymotiuk/ap-curriculum-bot.git",
   "author": "Yevhen Shymotiuk <yevhenshymotiuk@gmail.com>",

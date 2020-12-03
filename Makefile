@@ -1,7 +1,7 @@
 GOCMD=go
 GOBUILD=GOOS=linux $(GOCMD) build -ldflags="-d -s -w" -tags netgo -installsuffix netgo
 
-.PHONY: build clean test deploy
+.PHONY: build clean test deploy logs
 
 build:
 	$(GOBUILD) -o bin/setwebhook setwebhook/main.go
@@ -16,4 +16,7 @@ test:
 	cd ./helpers && $(GOCMD) test
 
 deploy: clean build test
-	npm run sls deploy --verbose
+	npm run deploy
+
+logs:
+	npm run logs
