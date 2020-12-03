@@ -13,3 +13,6 @@ serverless.env.yml
 .serverless/
 
 assets/
+
+# Mac OS
+.DS_Store

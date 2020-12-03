@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -75,6 +76,7 @@ func handler(
 	curriculumFile := os.Getenv("CURRICULUM_FILE")
 
 	message := update.Message
+	log.Printf("Object: %+v\nText: %s", message, message.Text)
 	var responseMessageText string
 
 	switch message.Command() {
@@ -92,6 +94,27 @@ func handler(
 			assetsBucket,
 			curriculumFile,
 			helpers.Now().AddDate(0, 0, 1),
+		)
+		if err != nil {
+			return apigateway.Response404, err
+		}
+	case "day":
+		if !strings.Contains(message.Text, " ") {
+			responseMessageText = "You should provide an argument for '/day' command"
+			break
+		}
+
+		splitted_text := strings.Split(message.Text, " ")
+
+		t, err := helpers.FromFormatted(splitted_text[1])
+		if err != nil {
+			return apigateway.Response404, err
+		}
+
+		responseMessageText, err = specificDayText(
+			assetsBucket,
+			curriculumFile,
+			*t,
 		)
 		if err != nil {
 			return apigateway.Response404, err

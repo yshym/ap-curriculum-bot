@@ -16,4 +16,4 @@ test:
 	cd ./helpers && $(GOCMD) test
 
 deploy: clean build test
-	sls deploy --verbose
+	npm run sls deploy --verbose
