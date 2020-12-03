@@ -71,12 +71,16 @@ func handler(
 	if err != nil {
 		return apigateway.Response404, err
 	}
+	log.Printf("Update: %+v", update)
+	if update.EditedMessage != nil {
+		log.Printf("EditedMessage: %+v", update.EditedMessage)
+	}
 
 	assetsBucket := os.Getenv("ASSETS_BUCKET")
 	curriculumFile := os.Getenv("CURRICULUM_FILE")
 
 	message := update.Message
-	log.Printf("Object: %+v\nText: %s", message, message.Text)
+	log.Printf("Message: %+v\nText: %s", message, message.Text)
 	var responseMessageText string
 
 	switch message.Command() {
@@ -104,9 +108,7 @@ func handler(
 			break
 		}
 
-		splitted_text := strings.Split(message.Text, " ")
-
-		t, err := helpers.FromFormatted(splitted_text[1])
+		t, err := helpers.FromFormatted(strings.TrimPrefix(message.Text, "/day "))
 		if err != nil {
 			return apigateway.Response404, err
 		}

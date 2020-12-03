@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -47,6 +48,11 @@ func FormatTime(t *time.Time) string {
 }
 
 func FromFormatted(s string) (*time.Time, error) {
+	formattedTimeRegexp := regexp.MustCompile(`^\d{1,2}\.\d{1,2}$`)
+	if !formattedTimeRegexp.MatchString(s) {
+		return nil, errors.New("Date should be 'DD.MM' formatted")
+	}
+
 	splitted_date := strings.Split(s, ".")
 	day_part, month_part := splitted_date[0], splitted_date[1]
 
